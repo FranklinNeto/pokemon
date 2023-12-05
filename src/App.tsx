@@ -1,10 +1,22 @@
 import { useEffect, useState } from "react";
-import "./App.css";
+
 import api from "./services/api";
-import { Card } from "./components/Card";
+import { PokemonCard } from "./components/Card";
+
+interface APIResults {
+  name: string;
+  url: string;
+}
+
+/* interface APIResponse {
+  count: number,
+  next: string | null
+  previous: string | null
+  results: APIResults[]
+}  */
 
 function App() {
-  const [pokemons, setPokemons] = useState();
+  const [pokemons, setPokemons] = useState<APIResults[]>([]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -12,7 +24,7 @@ function App() {
     setIsLoading(true);
 
     api
-      .get(``, {
+      .get(`pokemon`, {
         params: {
           limit: 151,
           offset: 0,
@@ -20,11 +32,9 @@ function App() {
       })
 
       .then((response) => {
-        
-        setPokemons(response.data.results)
-        console.log(response)
-      }
-        )
+        setPokemons(response.data.results);
+        console.log(response);
+      })
       .catch((erro) => console.error(erro))
       .finally(() => {
         setTimeout(() => setIsLoading(false), 2000);
@@ -38,7 +48,7 @@ function App() {
       ) : (
         <ul>
           {pokemons.map((pokemon) => {
-            <Card nome={pokemon.name} />;
+            return <PokemonCard nome={pokemon.name} key={pokemon.name} />;
           })}
         </ul>
       )}
